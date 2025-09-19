@@ -3,7 +3,7 @@
   pkgs,
   microkit,
 }:
-pkgs.stdenvNoCC.mkDerivation {
+pkgs.tools.stdenvNoCC {
   name = "sel4-pi4";
 
   inherit system;

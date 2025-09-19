@@ -22,19 +22,25 @@
       (
         system:
         let
-          pkgs = import nixpkgs { inherit system; };
-          microkit = import ./deps/microkit.nix { inherit system pkgs; };
-
+          pkgs = import ./deps/buildenv.nix {
+            nixpkgs = import nixpkgs {
+              inherit system;
+            };
+          };
+          microkit = import ./deps/microkit.nix {
+            inherit system;
+            inherit (pkgs.tools) fetchzip;
+          };
         in
         {
-          devShells.default = pkgs.mkShellNoCC rec {
+          devShells.default = pkgs.tools.mkShellNoCC rec {
             name = "sel4-shell";
 
             env.MICROKIT_SDK = microkit;
 
             nativeBuildInputs = with pkgs; [
-              pkgsCross.aarch64-embedded.stdenv.cc.bintools
-              pkgsCross.aarch64-embedded.stdenv.cc
+              bintools
+              cc
               qemu
               gnumake
               curl
