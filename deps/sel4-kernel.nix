@@ -9,12 +9,12 @@ let
       "AARCH64_bcm2711_verified" = {
         bintools = nixpkgs.pkgsCross.aarch64-embedded.stdenv.cc.bintools;
         cc = nixpkgs.pkgsCross.aarch64-embedded.stdenv.cc;
-        cross-prefix = "aarch64-none-elf-";
+        toolchain = "aarch64-none-elf-";
       };
       "X64_verified" = {
         bintools = nixpkgs.stdenv.cc.bintools;
         cc = nixpkgs.stdenv.cc;
-        cross-prefix = "";
+        toolchain = "";
       };
     }
     .${config};
@@ -60,7 +60,7 @@ nixpkgs.stdenvNoCC.mkDerivation {
     mkdir _build
     pushd _build
     cmake \
-      -DCROSS_COMPILER_PREFIX=${args.cross-prefix} \
+      -DCROSS_COMPILER_PREFIX=${args.toolchain} \
       -DCMAKE_TOOLCHAIN_FILE=../gcc.cmake \
       -DCMAKE_INSTALL_PREFIX=$out \
       -G Ninja \
