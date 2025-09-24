@@ -224,4 +224,20 @@ in
 
     fixupPhase = ":";
   };
+
+  example = nixpkgs.stdenvNoCC.mkDerivation {
+    name = "microkit-example-${sdk-version}";
+
+    buildInputs = [];
+
+    src = microkit-src;
+
+    buildPhase = ":";
+
+    installPhase = ''
+      cp -r example $out
+    '';
+
+    fixupPhase = ":";
+  };
 }
