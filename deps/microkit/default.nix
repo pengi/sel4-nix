@@ -44,8 +44,11 @@ in
     builtins.mapAttrs (
       config: attrs:
       build-sdk {
+        inherit (nixpkgs.stdenvNoCC) mkDerivation;
+        inherit nixpkgs;
         inherit board config attrs;
         inherit microkit-src sel4-src;
+        inherit sdk-version;
       }
     ) configs
   ) board-configs;

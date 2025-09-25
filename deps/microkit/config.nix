@@ -8,15 +8,15 @@ let
   };
 
   default_kernel_options = {
-    "KernelIsMCS" = true;
+    "KernelIsMCS" = "ON";
   };
 
   default_kernel_options_arch = {
     aarch64 = {
-      "KernelArmExportPCNTUser" = true;
-      "KernelArmHypervisorSupport" = true;
-      "KernelArmVtimerUpdateVOffset" = false;
-      "KernelAllowSMCCalls" = true;
+      "KernelArmExportPCNTUser" = "ON";
+      "KernelArmHypervisorSupport" = "ON";
+      "KernelArmVtimerUpdateVOffset" = "OFF";
+      "KernelAllowSMCCalls" = "ON";
     };
     riscv64 = {
     };
@@ -24,7 +24,7 @@ let
 
   configs = {
     release = {
-      debug = false;
+      debug = "OFF";
       kernel_options = { };
       kernel_options_arch = {
         aarch64 = { };
@@ -32,11 +32,11 @@ let
       };
     };
     debug = {
-      debug = true;
+      debug = "ON";
       kernel_options = {
-        "KernelDebugBuild" = true;
-        "KernelPrinting" = true;
-        "KernelVerificationBuild" = false;
+        "KernelDebugBuild" = "ON";
+        "KernelPrinting" = "ON";
+        "KernelVerificationBuild" = "OFF";
       };
       kernel_options_arch = {
         aarch64 = { };
@@ -44,15 +44,15 @@ let
       };
     };
     benchmark = {
-      debug = false;
+      debug = "OFF";
       kernel_options = {
-        "KernelDebugBuild" = false;
-        "KernelVerificationBuild" = false;
+        "KernelDebugBuild" = "OFF";
+        "KernelVerificationBuild" = "OFF";
         "KernelBenchmarks" = "track_utilisation";
       };
       kernel_options_arch = {
         aarch64 = {
-          "KernelArmExportPMUUser" = true;
+          "KernelArmExportPMUUser" = "ON";
         };
         riscv64 = { };
       };
@@ -109,16 +109,16 @@ let
         "KernelPlatform" = "imx8mq-evk";
       };
     };
-    imx8mp_iotgate = {
-      arch = "aarch64";
-      gcc_cpu = "cortex-a53";
-      loader_link_address = "0x50000000";
-      kernel_options = {
-        "KernelPlatform" = "imx8mp-evk";
-        "KernelCustomDTS" = "custom_dts/iot-gate.dts";
-        "KernelCustomDTSOverlay" = "src/plat/imx8m-evk/overlay-imx8mp-evk.dts";
-      };
-    };
+    #imx8mp_iotgate = {
+    #  arch = "aarch64";
+    #  gcc_cpu = "cortex-a53";
+    #  loader_link_address = "0x50000000";
+    #  kernel_options = {
+    #    "KernelPlatform" = "imx8mp-evk";
+    #    "KernelCustomDTS" = "custom_dts/iot-gate.dts";
+    #    "KernelCustomDTSOverlay" = "src/plat/imx8m-evk/overlay-imx8mp-evk.dts";
+    #  };
+    #};
     odroidc2 = {
       arch = "aarch64";
       gcc_cpu = "cortex-a53";
@@ -153,7 +153,7 @@ let
         "QEMU_MEMORY" = "2048";
         # There is not peripheral timer; so we use the ARM
         # architectural timer
-        "KernelArmExportPTMRUser" = true;
+        "KernelArmExportPTMRUser" = "ON";
       };
     };
     qemu_virt_riscv64 = {
@@ -163,8 +163,8 @@ let
       kernel_options = {
         "KernelPlatform" = "qemu-riscv-virt";
         "QEMU_MEMORY" = "2048";
-        "KernelRiscvExtD" = true;
-        "KernelRiscvExtF" = true;
+        "KernelRiscvExtD" = "ON";
+        "KernelRiscvExtF" = "ON";
       };
     };
     rpi4b_1gb = {
@@ -173,7 +173,7 @@ let
       loader_link_address = "0x10000000";
       kernel_options = {
         "KernelPlatform" = "bcm2711";
-        "RPI4_MEMORY" = 1024;
+        "RPI4_MEMORY" = "1024";
       };
     };
     rpi4b_2gb = {
@@ -182,7 +182,7 @@ let
       loader_link_address = "0x10000000";
       kernel_options = {
         "KernelPlatform" = "bcm2711";
-        "RPI4_MEMORY" = 2048;
+        "RPI4_MEMORY" = "2048";
       };
     };
     rpi4b_4gb = {
@@ -191,7 +191,7 @@ let
       loader_link_address = "0x10000000";
       kernel_options = {
         "KernelPlatform" = "bcm2711";
-        "RPI4_MEMORY" = 4096;
+        "RPI4_MEMORY" = "4096";
       };
     };
     rpi4b_8gb = {
@@ -200,7 +200,7 @@ let
       loader_link_address = "0x10000000";
       kernel_options = {
         "KernelPlatform" = "bcm2711";
-        "RPI4_MEMORY" = 8192;
+        "RPI4_MEMORY" = "8192";
       };
     };
     rockpro64 = {
@@ -217,8 +217,8 @@ let
       loader_link_address = "0x90000000";
       kernel_options = {
         "KernelPlatform" = "hifive-p550";
-        "KernelRiscvExtD" = true;
-        "KernelRiscvExtF" = true;
+        "KernelRiscvExtD" = "ON";
+        "KernelRiscvExtF" = "ON";
       };
     };
     star64 = {
@@ -227,8 +227,8 @@ let
       loader_link_address = "0x60000000";
       kernel_options = {
         "KernelPlatform" = "star64";
-        "KernelRiscvExtD" = true;
-        "KernelRiscvExtF" = true;
+        "KernelRiscvExtD" = "ON";
+        "KernelRiscvExtF" = "ON";
       };
     };
     ariane = {
@@ -237,8 +237,8 @@ let
       loader_link_address = "0x90000000";
       kernel_options = {
         "KernelPlatform" = "ariane";
-        "KernelRiscvExtD" = true;
-        "KernelRiscvExtF" = true;
+        "KernelRiscvExtD" = "ON";
+        "KernelRiscvExtF" = "ON";
       };
     };
     cheshire = {
@@ -247,8 +247,8 @@ let
       loader_link_address = "0x90000000";
       kernel_options = {
         "KernelPlatform" = "cheshire";
-        "KernelRiscvExtD" = true;
-        "KernelRiscvExtF" = true;
+        "KernelRiscvExtD" = "ON";
+        "KernelRiscvExtF" = "ON";
       };
     };
   };

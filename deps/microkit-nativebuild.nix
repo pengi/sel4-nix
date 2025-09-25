@@ -152,8 +152,6 @@ in
         dtc
         bash
         libxml2
-
-        cmake
         qemu
       ];
 
