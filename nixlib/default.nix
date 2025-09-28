@@ -1,3 +1,0 @@
-{
-  derv = import ./derv;
-}
