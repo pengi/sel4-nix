@@ -6,8 +6,8 @@ let
 
   microkit-src = nixpkgs.fetchgit {
     url = "https://github.com/seL4/microkit.git";
-    rev = "refs/tags/2.0.1";
-    hash = "sha256-IWnbfU0UdOQj9pntgU9eJSxcHiTBx475dITwkexr23A=";
+    rev = "d7da977bab18d206ed071fa4bf8fcd35162f5934";
+    hash = "sha256-uwiGZx06uZMNLrWuFlL3xVWca9VnGiDRe1Q3MMEvhEY=";
   };
 
   sel4-src = nixpkgs.fetchgit {
@@ -23,7 +23,7 @@ let
     src = microkit-src;
     sourceRoot = "${src.name}/tool/microkit";
 
-    cargoHash = "sha256-z3zw1Ck7Fwu6Ay6qSsKphw4mi+dkYAEl1SmHGDr0nVc=";
+    cargoHash = "sha256-LL4SMrm1tXyOPqsT7Tj4xCYKIi2MQYfZbz7zxiFYDkI=";
   };
 
   board-configs = import ./config.nix { };

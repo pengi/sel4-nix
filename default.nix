@@ -2,7 +2,7 @@ let
   nixpkgs = import <nixpkgs> { };
   microkit = import ./nix/microkit { inherit nixpkgs; };
 
-  mk-sdk = microkit.sdk.rpi4b_1gb.debug;
+  mk-sdk = microkit.sdk.rpi4b_8gb.debug;
 
   target = import ./example/target {
     inherit mk-sdk;
