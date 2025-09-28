@@ -58,7 +58,14 @@ in
       pandoc
       (texliveSmall.withPackages (
         ps: with ps; [
-          collection-latexextra # TODO: slim down a lot
+          enumitem
+          sfmath
+          fontaxes
+          isodate
+          substr
+          tcolorbox
+          pdfcol
+          titlesec
           roboto
         ]
       ))
