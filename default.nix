@@ -1,8 +1,12 @@
+{
+  board ? "rpi4b_8gb"
+}:
 let
+
   nixpkgs = import <nixpkgs> { };
   microkit = import ./nix/microkit { inherit nixpkgs; };
 
-  mk-sdk = microkit.sdk.rpi4b_8gb.debug;
+  mk-sdk = microkit.sdk.${board}.debug;
 
   target = import ./example/target {
     inherit mk-sdk;
