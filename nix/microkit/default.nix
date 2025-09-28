@@ -6,24 +6,24 @@ let
 
   microkit-src = nixpkgs.fetchgit {
     url = "https://github.com/seL4/microkit.git";
-    rev = "d7da977bab18d206ed071fa4bf8fcd35162f5934";
-    hash = "sha256-uwiGZx06uZMNLrWuFlL3xVWca9VnGiDRe1Q3MMEvhEY=";
+    rev = "refs/tags/2.0.1";
+    hash = "sha256-IWnbfU0UdOQj9pntgU9eJSxcHiTBx475dITwkexr23A=";
   };
 
   sel4-src = nixpkgs.fetchgit {
     url = "https://github.com/seL4/seL4.git";
-    rev = "f5e45a24531ad9ed28c56efb8346ab7398895fff";
-    hash = "sha256-cWMulMMe1+HFWokmroIZdpvM253P2gxbEWOBj3EDYHU=";
+    rev = "3aafe9e0b9527794c547d12090117e1000302da0"; # microkit branch
+    hash = "sha256-HFy2Q/T7e4Du4cIepzyWUA3s+CHGOf7ip8ggk2jnZp0=";
   };
 
   microkit-tool = nixpkgs.rustPlatform.buildRustPackage rec {
     pname = "microkit-tool";
-    version = microkit-version;
+    version = sdk-version;
 
     src = microkit-src;
     sourceRoot = "${src.name}/tool/microkit";
 
-    cargoHash = "sha256-LL4SMrm1tXyOPqsT7Tj4xCYKIi2MQYfZbz7zxiFYDkI=";
+    cargoHash = "sha256-z3zw1Ck7Fwu6Ay6qSsKphw4mi+dkYAEl1SmHGDr0nVc=";
   };
 
   board-configs = import ./config.nix { };
@@ -45,7 +45,7 @@ in
         inherit (nixpkgs.stdenvNoCC) mkDerivation;
         inherit nixpkgs;
         inherit board config attrs;
-        inherit microkit-src sel4-src;
+        inherit microkit-src sel4-src microkit-tool;
         inherit sdk-version;
       }
     ) configs

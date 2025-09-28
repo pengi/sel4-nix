@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<system>
+    <protection_domain name="empty" priority="3">
+        <program_image path="empty.elf" />
+    </protection_domain>
+</system>

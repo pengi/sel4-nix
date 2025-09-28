@@ -10,6 +10,8 @@
   microkit-src,
   sel4-src,
 
+  microkit-tool,
+
   sdk-version,
 }:
 let
@@ -30,8 +32,10 @@ let
     ]
   );
 
+  toolchain = "${attrs.arch}-none-elf";
+
   defines = attrs.kernel_options // {
-    CROSS_COMPILER_PREFIX = "${attrs.arch}-none-elf-"; # gcc - use -DTRIPLE=arch for llvm
+    CROSS_COMPILER_PREFIX = "${toolchain}-"; # gcc - use -DTRIPLE=arch for llvm
     PYTHON3 = "${sel4-python}/bin/python";
     KernelSel4Arch = "${attrs.arch}";
   };
@@ -57,7 +61,6 @@ let
     ];
 
     dontUseCmakeConfigure = true;
-
     src = sel4-src;
 
     patchPhase = ''
@@ -77,16 +80,6 @@ let
 
     # Don't run patchelf on embedded
     fixupPhase = ":";
-  };
-
-  tool-build = nixpkgs.rustPlatform.buildRustPackage rec {
-    pname = "microkit-tool";
-    version = sdk-version;
-
-    src = microkit-src;
-    sourceRoot = "${src.name}/tool/microkit";
-
-    cargoHash = "sha256-LL4SMrm1tXyOPqsT7Tj4xCYKIi2MQYfZbz7zxiFYDkI=";
   };
 
   sel4-gen-config = builtins.fromJSON (
@@ -131,6 +124,7 @@ let
         dontUseCmakeConfigure = true;
 
         ARCH = attrs.arch;
+        TOOLCHAIN = "${toolchain}-";
         BOARD = board;
         TARGET_TRIPLE = "${attrs.arch}-none-elf";
 
@@ -177,6 +171,7 @@ let
         dontUseCmakeConfigure = true;
 
         ARCH = attrs.arch;
+        TOOLCHAIN = "${toolchain}-";
         BOARD = board;
         TARGET_TRIPLE = "${attrs.arch}-none-elf";
 
@@ -215,7 +210,7 @@ let
 
   deps = {
     sel4 = sel4-build;
-    tool = tool-build;
+    tool = microkit-tool;
     loader = build-elf "loader" loader-env;
     monitor = build-elf "monitor" { };
     lib = build-lib "libmicrokit" { };
@@ -224,16 +219,18 @@ in
 mkDerivation {
   name = "microkit-${board}-${config}";
 
+  # So derivations of this can access its compliler
+  cc = stdenv_arch.${attrs.arch}.cc;
+  arch = attrs.arch;
+  gcc_cpu = attrs.gcc_cpu;
+  inherit board config toolchain;
+
   buildInputs = [ ];
-
   dontUseCmakeConfigure = true;
-
   src = microkit-src;
 
   patchPhase = ":";
-
   buildPhase = ":";
-
   installPhase = ''
     mkdir -p $out
     mkdir -p $out/bin
