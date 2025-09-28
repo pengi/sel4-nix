@@ -14,6 +14,11 @@
 }:
 let
 
+  stdenv_arch = {
+    aarch64 = nixpkgs.pkgsCross.aarch64-embedded.stdenv;
+    riscv64 = nixpkgs.pkgsCross.riscv64-embedded.stdenv;
+  };
+
   sel4-python = nixpkgs.python312.withPackages (
     ps: with ps; [
       ply
@@ -42,8 +47,8 @@ let
     version = sdk-version;
 
     buildInputs = [
-      attrs.stdenv.cc.bintools
-      attrs.stdenv.cc
+      stdenv_arch.${attrs.arch}.cc.bintools
+      stdenv_arch.${attrs.arch}.cc
 
       nixpkgs.cmake
       nixpkgs.ninja
@@ -119,8 +124,8 @@ let
         version = sdk-version;
 
         buildInputs = [
-          attrs.stdenv.cc.bintools
-          attrs.stdenv.cc
+          stdenv_arch.${attrs.arch}.cc.bintools
+          stdenv_arch.${attrs.arch}.cc
         ];
 
         dontUseCmakeConfigure = true;
@@ -165,8 +170,8 @@ let
         name = "microkit-${component_name}-${board}-${config}";
 
         buildInputs = [
-          attrs.stdenv.cc.bintools
-          attrs.stdenv.cc
+          stdenv_arch.${attrs.arch}.cc.bintools
+          stdenv_arch.${attrs.arch}.cc
         ];
 
         dontUseCmakeConfigure = true;

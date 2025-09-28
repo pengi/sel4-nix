@@ -26,9 +26,7 @@ let
     cargoHash = "sha256-LL4SMrm1tXyOPqsT7Tj4xCYKIi2MQYfZbz7zxiFYDkI=";
   };
 
-  board-configs = import ./config.nix {
-    inherit nixpkgs;
-  };
+  board-configs = import ./config.nix { };
 
   microkit-version = "2.0.1-d7da977";
   sel4-version = "sel4-f5e45a2";

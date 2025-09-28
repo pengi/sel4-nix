@@ -1,12 +1,5 @@
-{
-  nixpkgs,
-}:
+{ }:
 let
-  stdenv_arch = {
-    aarch64 = nixpkgs.pkgsCross.aarch64-embedded.stdenv;
-    riscv64 = nixpkgs.pkgsCross.riscv64-embedded.stdenv;
-  };
-
   default_kernel_options = {
     "KernelIsMCS" = "ON";
   };
@@ -258,7 +251,6 @@ builtins.mapAttrs (
   (builtins.mapAttrs (config: conf_attrs: {
     inherit (board_attrs) arch gcc_cpu loader_link_address;
     inherit (conf_attrs) debug;
-    stdenv = stdenv_arch.${board_attrs.arch};
     kernel_options =
       default_kernel_options
       // default_kernel_options_arch.${board_attrs.arch}
