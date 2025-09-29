@@ -5,6 +5,7 @@
 let
   apps = map (app: (import app { inherit mk-sdk mkDerivation; })) [
     ../apps/empty
+    ../apps/rpi4b/timer
   ];
 
   app_search_paths = builtins.concatStringsSep " " (builtins.map (app: "--search-path \"${app}\"") apps);
