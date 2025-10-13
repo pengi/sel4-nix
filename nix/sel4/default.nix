@@ -4,7 +4,7 @@
   config ? "AARCH64_bcm2711_verified",
 }:
 let
-  board_config = import ./config.nix;
+  board_config = import ./config.nix { inherit nixpkgs; };
   args = board_config.${config};
 in
 nixpkgs.stdenvNoCC.mkDerivation {

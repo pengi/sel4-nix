@@ -1,3 +1,4 @@
+{ nixpkgs }:
 {
   "AARCH64_bcm2711_verified" = {
     bintools = nixpkgs.pkgsCross.aarch64-embedded.stdenv.cc.bintools;
