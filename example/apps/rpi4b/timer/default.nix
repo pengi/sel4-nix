@@ -15,7 +15,7 @@ mkDerivation {
 
   sdk = mk-sdk;
   CPU = "${mk-sdk.gcc_cpu}";
-  TOOLCHAIN = "${mk-sdk.toolchain}";
+  TARGET_PREFIX = "${mk-sdk.cc.targetPrefix}";
   BOARD = "${mk-sdk.board}";
   CONFIG = "${mk-sdk.config}";
   MICROKIT_SDK = "${mk-sdk}";

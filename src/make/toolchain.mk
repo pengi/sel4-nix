@@ -1,9 +1,9 @@
 # Update to be dynamic for multiple targets
-TOOLCHAIN:=aarch64-none-elf
+TARGET_PREFIX:=aarch64-none-elf-
 
-CC=:$(TOOLCHAIN)-gcc
-LD=:$(TOOLCHAIN)-gcc
-AS=:$(TOOLCHAIN)-gcc
+CC=:$(TARGET_PREFIX)gcc
+LD=:$(TARGET_PREFIX)gcc
+AS=:$(TARGET_PREFIX)gcc
 
 # Tool should be added to PATH
 MICROKIT_TOOL ?= microkit

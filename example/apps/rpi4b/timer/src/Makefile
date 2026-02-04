@@ -2,8 +2,8 @@ APP := rpi4b_timer.elf
 
 BUILD_DIR=build
 BOARD_DIR := $(MICROKIT_SDK)/board/$(BOARD)/$(CONFIG)
-CC := $(TOOLCHAIN)-gcc
-LD := $(TOOLCHAIN)-ld
+CC := $(TARGET_PREFIX)gcc
+LD := $(TARGET_PREFIX)ld
 
 CFLAGS := \
 	-mcpu=$(CPU) \

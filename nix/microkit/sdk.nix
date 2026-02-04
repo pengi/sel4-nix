@@ -16,10 +16,12 @@
 }:
 let
 
-  stdenv_arch = {
-    aarch64 = nixpkgs.pkgsCross.aarch64-embedded.stdenv;
-    riscv64 = nixpkgs.pkgsCross.riscv64-embedded.stdenv;
-  };
+  stdenv =
+    {
+      aarch64 = nixpkgs.pkgsCross.aarch64-embedded.stdenv;
+      riscv64 = nixpkgs.pkgsCross.riscv64-embedded.stdenv;
+    }
+    .${attrs.arch};
 
   sel4-python = nixpkgs.python312.withPackages (
     ps: with ps; [
@@ -32,10 +34,8 @@ let
     ]
   );
 
-  toolchain = "${attrs.arch}-none-elf";
-
   defines = attrs.kernel_options // {
-    CROSS_COMPILER_PREFIX = "${toolchain}-"; # gcc - use -DTRIPLE=arch for llvm
+    CROSS_COMPILER_PREFIX = stdenv.cc.targetPrefix; # gcc - use -DTRIPLE=arch for llvm
     PYTHON3 = "${sel4-python}/bin/python";
     KernelSel4Arch = "${attrs.arch}";
   };
@@ -51,8 +51,8 @@ let
     version = sdk-version;
 
     buildInputs = [
-      stdenv_arch.${attrs.arch}.cc.bintools
-      stdenv_arch.${attrs.arch}.cc
+      stdenv.cc.bintools
+      stdenv.cc
 
       nixpkgs.cmake
       nixpkgs.ninja
@@ -117,14 +117,14 @@ let
         version = sdk-version;
 
         buildInputs = [
-          stdenv_arch.${attrs.arch}.cc.bintools
-          stdenv_arch.${attrs.arch}.cc
+          stdenv.cc.bintools
+          stdenv.cc
         ];
 
         dontUseCmakeConfigure = true;
 
         ARCH = attrs.arch;
-        TOOLCHAIN = "${toolchain}-";
+        TARGET_PREFIX = stdenv.cc.targetPrefix;
         BOARD = board;
         TARGET_TRIPLE = "${attrs.arch}-none-elf";
 
@@ -164,14 +164,14 @@ let
         name = "microkit-${component_name}-${board}-${config}";
 
         buildInputs = [
-          stdenv_arch.${attrs.arch}.cc.bintools
-          stdenv_arch.${attrs.arch}.cc
+          stdenv.cc.bintools
+          stdenv.cc
         ];
 
         dontUseCmakeConfigure = true;
 
         ARCH = attrs.arch;
-        TOOLCHAIN = "${toolchain}-";
+        TARGET_PREFIX = stdenv.cc.targetPrefix;
         BOARD = board;
         TARGET_TRIPLE = "${attrs.arch}-none-elf";
 
@@ -220,10 +220,10 @@ mkDerivation {
   name = "microkit-${board}-${config}";
 
   # So derivations of this can access its compliler
-  cc = stdenv_arch.${attrs.arch}.cc;
+  cc = stdenv.cc;
   arch = attrs.arch;
   gcc_cpu = attrs.gcc_cpu;
-  inherit board config toolchain;
+  inherit board config;
 
   buildInputs = [ ];
   dontUseCmakeConfigure = true;
