@@ -9,62 +9,127 @@ let
     rev = "refs/tags/14.0.0";
     hash = "sha256-kzRV3qIsfyIFoc2hT6l0cIyR6zLD4yHcPXCAbGAQGsk=";
   };
+
+  sel4_build_deps = with nixpkgs; [
+    (python312.withPackages (
+      ps: with ps; [
+        pyyaml
+        pyfdt
+        jinja2
+        jsonschema
+        ply
+      ]
+    ))
+
+    cmake
+    ninja
+    dtc
+    bash
+    libxml2
+  ];
+
+  sel4_build = (
+    {
+      name,
+      cc,
+      cmake_args ? "",
+    }:
+    nixpkgs.stdenvNoCC.mkDerivation {
+      name = "sel4-kernel-${name}";
+      src = sel4_src;
+
+      buildInputs = [
+        cc.bintools
+        cc
+      ]
+      ++ sel4_build_deps;
+
+      dontUseCmakeConfigure = true;
+
+      patchPhase = ''
+        patchShebangs .
+      '';
+
+      #phases = [ "unpackPhase" "patchPhase" "configurePhase" "buildPhase" ];
+
+      configurePhase = ''
+        mkdir _build
+        pushd _build
+        cmake \
+          -DCROSS_COMPILER_PREFIX=${cc.targetPrefix} \
+          -DCMAKE_TOOLCHAIN_FILE=../gcc.cmake \
+          -DCMAKE_INSTALL_PREFIX=$out \
+          -G Ninja \
+          ${cmake_args} \
+          ../
+        popd
+      '';
+
+      buildPhase = ''
+        pushd _build
+        ninja kernel.elf
+        popd
+      '';
+
+      installPhase = ''
+        cmake --install _build/
+      '';
+    }
+  );
+
+  sel4_build_defs =
+    {
+      name,
+      cc,
+      args ? { },
+    }:
+    sel4_build {
+      inherit name cc;
+      cmake_args = builtins.concatStringsSep " " (
+        builtins.sort builtins.lessThan (
+          builtins.attrValues (builtins.mapAttrs (name: value: "-D${name}=\"${value}\"") args)
+        )
+      );
+    };
 in
-builtins.mapAttrs (
-  config_name: config_args:
-  nixpkgs.stdenvNoCC.mkDerivation {
-    name = "sel4-kernel-${config_name}";
-    src = sel4_src;
+{
+  verified = builtins.mapAttrs (
+    name: cc:
+    sel4_build {
+      inherit name cc;
+      cmake_args = "-C ../configs/${name}.cmake";
+    }
+  ) board_config;
 
-    buildInputs = with nixpkgs; [
-      (python312.withPackages (
-        ps: with ps; [
-          pyyaml
-          pyfdt
-          jinja2
-          jsonschema
-          ply
-        ]
-      ))
-      config_args.bintools
-      config_args.cc
+  custom =
+    {
+      cc,
+      plat,
+      args ? { },
+    }:
+    sel4_build_defs {
+      inherit cc;
+      name = "${cc.targetPrefix}${plat}";
+      args = {
+        KernelPlatform = plat;
+      }
+      // args;
+    };
 
-      cmake
-      ninja
-      dtc
-      bash
-      libxml2
-    ];
-
-    dontUseCmakeConfigure = true;
-
-    patchPhase = ''
-      patchShebangs .
-    '';
-
-    #phases = [ "unpackPhase" "patchPhase" "configurePhase" "buildPhase" ];
-
-    configurePhase = ''
-      mkdir _build
-      pushd _build
-      cmake \
-        -DCROSS_COMPILER_PREFIX=${config_args.toolchain} \
-        -DCMAKE_TOOLCHAIN_FILE=../gcc.cmake \
-        -DCMAKE_INSTALL_PREFIX=$out \
-        -G Ninja \
-        -C ../configs/${config_name}.cmake \
-        ../
-      popd
-    '';
-
-    buildPhase = ''
-      pushd _build
-      ninja kernel.elf
-      popd
-    '';
-
-    installPhase = ''
-      cmake --install _build/
-    '';
-  }
-) board_config
+  custom_mcs =
+    {
+      cc,
+      plat,
+      args ? { },
+    }:
+    sel4_build_defs {
+      inherit cc;
+      name = "${cc.targetPrefix}${plat}-MCS";
+      args = {
+        KernelPlatform = plat;
+        KernelIsMCS = "1";
+        KernelStaticMaxPeriodUs = "(60 * 60 * MS_IN_S * US_IN_MS)";
+      }
+      // args;
+    };
+}
