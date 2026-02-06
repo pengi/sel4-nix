@@ -33,8 +33,11 @@ let
       name,
       cc,
       cmake_args ? "",
+      deps ? [ ],
     }:
     nixpkgs.stdenvNoCC.mkDerivation {
+      inherit cc;
+
       name = "sel4-kernel-${name}";
       src = sel4_src;
 
@@ -42,7 +45,8 @@ let
         cc.bintools
         cc
       ]
-      ++ sel4_build_deps;
+      ++ sel4_build_deps
+      ++ deps;
 
       dontUseCmakeConfigure = true;
 
@@ -82,9 +86,10 @@ let
       name,
       cc,
       args ? { },
+      deps ? [ ],
     }:
     sel4_build {
-      inherit name cc;
+      inherit name cc deps;
       cmake_args = builtins.concatStringsSep " " (
         builtins.sort builtins.lessThan (
           builtins.attrValues (builtins.mapAttrs (name: value: "-D${name}=\"${value}\"") args)
@@ -97,6 +102,7 @@ in
     name: cc:
     sel4_build {
       inherit name cc;
+      deps = [ ];
       cmake_args = "-C ../configs/${name}.cmake";
     }
   ) board_config;
@@ -106,9 +112,10 @@ in
       cc,
       plat,
       args ? { },
+      deps ? [ ],
     }:
     sel4_build_defs {
-      inherit cc;
+      inherit cc deps;
       name = "${cc.targetPrefix}${plat}";
       args = {
         KernelPlatform = plat;
@@ -121,9 +128,10 @@ in
       cc,
       plat,
       args ? { },
+      deps ? [ ],
     }:
     sel4_build_defs {
-      inherit cc;
+      inherit cc deps;
       name = "${cc.targetPrefix}${plat}-MCS";
       args = {
         KernelPlatform = plat;
