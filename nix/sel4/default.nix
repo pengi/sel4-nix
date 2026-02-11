@@ -18,6 +18,7 @@ let
         jinja2
         jsonschema
         ply
+        lxml
       ]
     ))
 
@@ -71,6 +72,7 @@ let
 
       buildPhase = ''
         pushd _build
+        ninja sel4_generated
         ninja kernel.elf
         popd
       '';
